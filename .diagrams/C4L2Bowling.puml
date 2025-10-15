@@ -1,0 +1,63 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include FONTAWESOME/users.puml
+
+AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service\neight sided")
+AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
+AddRelTag(aggregate_root, $lineColor="red")
+
+LAYOUT_TOP_DOWN()
+'LAYOUT_WITH_LEGEND()
+SHOW_PERSON_OUTLINE()
+'HIDE_STEREOTYPE()
+
+title Container Diagram for Bowling Alley System
+
+Person(employee, "Employee", "Employee of Bowling Alley")
+
+System_Boundary(bowlingalley, "Bowling Alley System"){
+
+    Container(Webapp, "Web Application", "JavaScript, React", "Delivers the static content and the bowling alley single page application.")
+    Container(singlepageapp, "Single-Page App", "JavaScript, React", "Provide bowling alley with functionality to employees")
+    Container(api_gateway, "API gateway", "Java, SpringBoot", "Provides bowling alley with functionality via JSON/REST HTTP API")
+
+    Container(ball_service, "ball_service", "Java, SpringBoot", "Provide bowling balls functionality via JSON/REST HTTP API", $tags ="microService")
+    Container(shoe_service, "shoe_service", "Java, SpringBoot", "Provide shoes functionality via JSON/REST HTTP API", $tags ="microService")
+    Container(lane_service, "lane_service", "Java, SpringBoot", "Provide bowling lanes functionality via JSON/REST HTTP API", $tags ="microService")
+    Container(transaction_service, "transaction_service", "Java, SpringBoot", "Provide bowling transactions functionality using the aggregators pattern via JSON/REST HTTP API", $tags ="microService")
+
+    ContainerDb(ball_db, "Ball DB", "MySQL", "Stores bowling balls information.", $tags ="storage")
+    ContainerDb(shoe_db, "Shoe DB", "Postgres", "Stores shoes information.", $tags ="storage")
+    ContainerDb(lane_db, "Lane DB", "MySQL", "Stores lanes information.", $tags ="storage")
+    ContainerDb(transaction_db, "Transaction DB", "Mongo db", "Stores transactions information.", $tags ="storage")
+
+    ' User to Web Application
+    Rel(employee, Webapp, "Uses")
+    Rel(employee, singlepageapp, "Uses")
+    Rel_R(Webapp, singlepageapp, "Loads Single Page App")
+
+    ' Web front-end to backend
+    Rel(singlepageapp, api_gateway, "Sends requests to", "REST/HTTPS/Json")
+    Rel(api_gateway, ball_service, "Routes to", "REST/HTTPS/Json")
+    Rel(api_gateway, shoe_service, "Routes to", "REST/HTTPS/Json")
+    Rel(api_gateway, lane_service, "Routes to", "REST/HTTPS/Json")
+    Rel(api_gateway, transaction_service, "Routes to", "REST/HTTPS/Json")
+
+    ' Microservices to Databases
+    Rel(ball_service, ball_db, "Reads/Writes to", "JDBC")
+    Rel(shoe_service, shoe_db, "Reads/Writes to", "JDBC")
+    Rel(lane_service, lane_db, "Reads/Writes to", "JDBC")
+    Rel_R(transaction_service, transaction_db, "Reads/Writes to", "Mongo")
+
+    ' Transaction service aggregates data from others
+    Rel(transaction_service, ball_service, "Gets ball info", "REST/HTTPS/Json", $tags="aggregate_root")
+    Rel(transaction_service, shoe_service, "Gets shoe info", "REST/HTTPS/Json", $tags="aggregate_root")
+    Rel(transaction_service, lane_service, "Gets lane info", "REST/HTTPS/Json", $tags="aggregate_root")
+
+}
+
+@enduml

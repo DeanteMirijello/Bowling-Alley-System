@@ -1,0 +1,5 @@
+include 'lane-service'
+include 'bowlingball-service'
+include 'shoe-service'
+include 'api-gateway'
+include 'transaction-service'

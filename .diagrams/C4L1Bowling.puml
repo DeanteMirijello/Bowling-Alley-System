@@ -1,0 +1,15 @@
+@startuml C4_Level1_Context
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Title System Context for Bowling Alley
+
+Person(employee, "Bowling Alley Employee", "Staff who operates the front desk and handles customer rentals")
+
+System(bowlingSystem, "Bowling Alley Management System", "Manages lane, shoe, and ball rentals for customers")
+
+System_Ext(paymentSystem, "Payment Processor", "Used to handle card transactions for rentals")
+
+Rel(employee, bowlingSystem, "Tracks bowling ball, bowling shoe and lane rentals", "Uses")
+Rel(bowlingSystem, paymentSystem, "Processes payments through")
+
+@enduml

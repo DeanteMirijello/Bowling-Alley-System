@@ -1,0 +1,203 @@
+@startuml
+hide circle
+top to bottom direction
+scale 0.2
+!define ENTITY(x) class x << Entity >>
+!define ENUM(x) class x << Enum >>
+!define AGGREGATE(x) class x << Aggregate >>
+!define AGGREGATE_ROOT(x) class x << Aggregate Root >>
+!define AGGREGATE_ROOT_ENTITY(x) class x << Aggregate Root >> << Entity >>
+!define VALUE_OBJECT(x) class x << Value Object >>
+!pragma useVerticalIf on
+skinparam dpi 350
+skinparam packageStyle rectangle
+skinparam rectangle {
+    BackgroundColor #f7f4eb
+    BorderColor Black
+}
+
+rectangle "Bowling Alley Context" as BowlingContext #line.dashed {
+
+  Package "Lane Sub-Domain" as LaneDomain <<Rectangle>> #Salmon {
+
+    ENTITY(Lane) #lightpink {
+        laneNumber: Integer
+        zone: LaneZone
+        status: LaneStatus
+    }
+
+    VALUE_OBJECT(LaneIdentifier) #Bisque {
+        laneId: UUID
+    }
+
+    VALUE_OBJECT(LaneZone) #Bisque {
+        zone: String
+    }
+
+    ENUM(LaneStatus) {
+        AVAILABLE
+        IN_USE
+        MAINTENANCE
+    }
+
+    Lane --> LaneIdentifier
+    Lane --> LaneZone
+    Lane --> LaneStatus
+  }
+
+  Package "Bowling Ball Sub-Domain" as BallDomain <<Rectangle>> #LightBlue {
+
+    ENTITY(BowlingBall) #lightpink {
+        size: BallSize
+        gripType: String
+        color: String
+        status: BallStatus
+    }
+
+    VALUE_OBJECT(BowlingBallIdentifier) #Bisque {
+        ballId: UUID
+    }
+
+    ENUM(BallSize) {
+        SIX
+        EIGHT
+        TEN
+        TWELVE
+        FOURTEEN
+        SIXTEEN
+    }
+
+    ENUM(BallStatus) {
+        AVAILABLE
+        IN_USE
+    }
+
+    BowlingBall --> BowlingBallIdentifier
+    BowlingBall --> BallSize
+    BowlingBall --> BallStatus
+  }
+
+  Package "Shoe Sub-Domain" as ShoeDomain <<Rectangle>> #LightGreen {
+
+    ENTITY(Shoe) #lightpink {
+        size: ShoeSize
+        purchaseDate: Date
+        status: ShoeStatus
+    }
+
+    VALUE_OBJECT(ShoeIdentifier) #Bisque {
+        shoeId: UUID
+    }
+
+    ENUM(ShoeSize) {
+    SIZE_5,
+    SIZE_6,
+    SIZE_7,
+    SIZE_8,
+    SIZE_9,
+    SIZE_10,
+    SIZE_11,
+    SIZE_12
+    }
+
+    ENUM(ShoeStatus) {
+        AVAILABLE
+        IN_USE
+    }
+
+    Shoe --> ShoeIdentifier
+    Shoe --> ShoeSize
+    Shoe --> ShoeStatus
+  }
+
+together {
+Package "Customer Sub-Domain" as CustomerDomain <<Rectangle>> #D3D3D3 {
+
+    ENTITY(Customer) #lightgrey {
+      firstName: String
+      lastName: String
+      email: String
+      phoneNumber: String
+      membershipLevel: MembershipLevel
+    }
+
+    VALUE_OBJECT(CustomerIdentifier) #lightgrey {
+      customerId: UUID
+    }
+
+    ENUM(MembershipLevel) #lightgrey {
+      BASIC
+      PREMIUM
+      VIP
+    }
+
+    Customer --> CustomerIdentifier
+    Customer --> MembershipLevel
+  }
+
+Package "Promotions Sub-Domain" as PromotionsDomain <<Rectangle>> #D3D3D3 {
+
+  ENTITY(Promotion) #lightgrey {
+    code: String
+    description: String
+    discountRate: Decimal
+    startDate: String
+    endDate: String
+    type: DiscountType
+  }
+
+  VALUE_OBJECT(PromotionIdentifier) #lightgrey {
+    promoId: UUID
+  }
+
+  ENUM(DiscountType) #lightgrey {
+    FIXED_AMOUNT
+    PERCENTAGE
+  }
+
+  Promotion --> PromotionIdentifier
+  Promotion --> DiscountType
+}
+
+
+  Package "Transaction Sub-Domain" as TransactionDomain <<Rectangle>> #DFBDF4 {
+
+    AGGREGATE(RentalTransaction) #lightblue {
+        customerName: String
+        laneZone: LaneZone
+        totalPrice: Decimal
+        dateCompleted: String
+        status: TransactionStatus
+    }
+
+    VALUE_OBJECT(TransactionIdentifier) #Bisque {
+        transactionId: UUID
+    }
+
+    ENUM(TransactionStatus) {
+        OPEN
+        COMPLETED
+        CANCELLED
+    }
+
+    note right of RentalTransaction
+    **INVARIANT**
+    “A transaction can only be marked as COMPLETED
+    if the associated lane is AVAILABLE.”
+    end note
+
+    RentalTransaction --> ShoeIdentifier
+    RentalTransaction --> BowlingBallIdentifier
+    RentalTransaction --> LaneIdentifier
+    RentalTransaction --> LaneZone
+    RentalTransaction --> TransactionStatus
+    RentalTransaction --> TransactionIdentifier
+    RentalTransaction --> CustomerIdentifier
+    RentalTransaction --> PromotionIdentifier
+
+  }
+
+}
+
+}
+@enduml

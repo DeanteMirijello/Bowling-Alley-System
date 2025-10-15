@@ -1,0 +1,15 @@
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 6.0.5
+
+spring:
+  data:
+    mongodb:
+      database: test-db
+      auto-index-creation: true
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG

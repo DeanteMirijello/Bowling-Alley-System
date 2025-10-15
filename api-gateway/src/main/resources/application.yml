@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+    org.springframework.web.reactive.function.client.WebClient: DEBUG
+    org.springframework.http.client.reactive: DEBUG

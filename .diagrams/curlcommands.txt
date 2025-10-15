@@ -1,0 +1,79 @@
+====BOWLINGBALLS====
+
+==POST==
+
+curl -v -X POST http://localhost:8080/api/balls \
+-H "Content-Type: application/json" \
+-d '{"size":"TEN","gripType":"Standard","color":"Violet","status":"AVAILABLE"}' | jq
+
+==GETBYID==
+
+curl -v http://localhost:8080/api/balls/925be9b6-4d0d-4754-be12-444b23c1a762 | jq
+
+==GETALL==
+
+curl -v http://localhost:8080/api/balls | jq
+
+==PUT==
+
+curl -v -X PUT http://localhost:8080/api/balls/925be9b6-4d0d-4754-be12-444b23c1a762 \
+-H "Content-Type: application/json" \
+-d '{"size":"TEN","gripType":"Standard","color":"Violet","status":"IN_USE"}' | jq
+
+==DELETE==
+
+curl -v -X DELETE http://localhost:8080/api/balls/925be9b6-4d0d-4754-be12-444b23c1a762 | jq
+
+____________________________________________
+====SHOES====
+
+==POST==
+
+curl -v -X POST http://localhost:8080/api/shoes \
+-H "Content-Type: application/json" \
+-d '{"size":"SIZE_9","purchaseDate":"2020-06-10","status":"IN_USE"}' | jq
+
+==GETBYID==
+
+curl -v http://localhost:8080/api/shoes/8acfec12-01f7-4021-86d9-ca15b7b2cdad | jq
+
+==GETALL==
+
+curl -v http://localhost:8080/api/shoes | jq
+
+==PUT==
+
+curl -v -X PUT http://localhost:8080/api/shoes/8acfec12-01f7-4021-86d9-ca15b7b2cdad \
+-H "Content-Type: application/json" \
+-d '{"size":"SIZE_9","purchaseDate":"2020-06-10","status":"AVAILABLE"}' | jq
+
+==DELETE==
+
+curl -v -X DELETE http://localhost:8080/api/shoes/8acfec12-01f7-4021-86d9-ca15b7b2cdad | jq
+
+____________________________________________
+====LANES====
+
+==POST==
+
+curl -v -X POST http://localhost:8080/api/lanes \
+-H "Content-Type: application/json" \
+-d '{"laneNumber":5,"zone":"A","status":"MAINTENANCE"}' | jq
+
+==GETBYID==
+
+curl -v http://localhost:8080/api/lanes/040f3251-dac9-4559-aa03-bfd2366acfe4 | jq
+
+==GETALL==
+
+curl -v http://localhost:8080/api/lanes | jq
+
+==PUT==
+
+curl -v -X PUT http://localhost:8080/api/lanes/040f3251-dac9-4559-aa03-bfd2366acfe4 \
+-H "Content-Type: application/json" \
+-d '{"laneNumber":5,"zone":"A","status":"AVAILABLE"}' | jq
+
+==DELETE==
+
+curl -v -X DELETE http://localhost:8080/api/lanes/040f3251-dac9-4559-aa03-bfd2366acfe4 | jq

@@ -1,0 +1,25 @@
+./gradlew clean build
+docker-compose down -v
+docker-compose up --build
+
+bash test_all.bash
+
+./gradlew :api-gateway:clean :api-gateway:build
+./gradlew :transaction-service:clean :transaction-service:build
+./gradlew :shoe-service:clean :shoe-service:build
+
+
+http://localhost:8080/api/
+
+mysql -u root -p
+
+use db
+show tables
+drop tables
+
+
+mysql = Memes4lif
+
+postgres = Postword64
+
+mongo = admin

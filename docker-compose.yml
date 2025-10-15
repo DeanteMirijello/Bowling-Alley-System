@@ -1,0 +1,215 @@
+  services:
+    # 🟦 Bowling Ball Service
+    bowlingball-service:
+      build:
+        context: ./bowlingball-service
+      container_name: bowlingball-service
+      expose:
+        - "8080"
+      depends_on:
+        - bowlingball-mysql
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://bowlingball-mysql:3306/bowling_ball_db
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=Memes4lif
+      networks:
+        - bowling-network
+
+    # 🐬 MySQL for Bowling Ball
+    bowlingball-mysql:
+      image: mysql:8.0
+      container_name: bowlingball-mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: Memes4lif
+        MYSQL_DATABASE: bowling_ball_db
+      expose:
+        - "3306"
+      volumes:
+        - bowlingball-mysql-data:/var/lib/mysql
+        - ./bowlingball-service/src/main/resources/schema-mysql.sql:/docker-entrypoint-initdb.d/1_schema.sql
+        - ./bowlingball-service/src/main/resources/data-mysql.sql:/docker-entrypoint-initdb.d/2_data.sql
+      networks:
+        - bowling-network
+
+    # 🖥️ Adminer GUI
+    bowlingball-adminer:
+      image: adminer
+      container_name: bowlingball-adminer
+      ports:
+        - "8085:8080"
+      depends_on:
+        - bowlingball-mysql
+      networks:
+        - bowling-network
+
+##############################################################################################################
+
+    # 👟 Shoe Service
+    shoe-service:
+      build:
+        context: ./shoe-service
+        dockerfile: Dockerfile
+      container_name: shoe-service
+      expose:
+        - "8080"
+      depends_on:
+        - shoe-postgres
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://shoe-postgres:5432/shoe_db
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=Postword64
+      networks:
+        - bowling-network
+
+    # 🐘 PostgreSQL for Shoe Service
+    shoe-postgres:
+      image: postgres:14
+      container_name: shoe-postgres
+      environment:
+        POSTGRES_DB: shoe_db
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: Postword64
+      expose:
+        - "5432"
+      volumes:
+        - shoe-postgres-data:/var/lib/postgresql/data
+        - ./shoe-service/src/main/resources/schema-postgres.sql:/docker-entrypoint-initdb.d/1_schema.sql
+        - ./shoe-service/src/main/resources/data-postgres.sql:/docker-entrypoint-initdb.d/2_data.sql
+
+      networks:
+        - bowling-network
+
+    # 🧑‍💻 PGAdmin for Shoe DB
+    shoe-pgadmin:
+      image: dpage/pgadmin4
+      container_name: shoe-pgadmin
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      ports:
+        - "8084:80"
+      depends_on:
+        - shoe-postgres
+      networks:
+        - bowling-network
+
+#################################################################################################################3
+
+    # 🛣️ Lane Service
+    lane-service:
+      build:
+        context: ./lane-service
+        dockerfile: Dockerfile
+      container_name: lane-service
+      expose:
+        - "8080"
+      depends_on:
+        - lane-mysql
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://lane-mysql:3306/lane_service_db
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=Memes4lif
+      networks:
+        - bowling-network
+
+    # 🐬 MySQL for Lane Service
+    lane-mysql:
+      image: mysql:8.0
+      container_name: lane-mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: Memes4lif
+        MYSQL_DATABASE: lane_service_db
+      expose:
+        - "3306"
+      volumes:
+        - lane-mysql-data:/var/lib/mysql
+        - ./lane-service/src/main/resources/schema-mysql.sql:/docker-entrypoint-initdb.d/1_schema.sql
+        - ./lane-service/src/main/resources/data-mysql.sql:/docker-entrypoint-initdb.d/2_data.sql
+
+      networks:
+        - bowling-network
+
+    # 🖥️ Adminer for Lane DB
+    lane-adminer:
+      image: adminer
+      container_name: lane-adminer
+      ports:
+        - "8086:8080"
+      depends_on:
+        - lane-mysql
+      networks:
+        - bowling-network
+
+#################################################################################################################
+
+    # 🔁 Transaction Service
+    transaction-service:
+      build:
+        context: ./transaction-service
+        dockerfile: Dockerfile
+      container_name: transaction-service
+      depends_on:
+        - transaction-mongo
+        - bowlingball-service
+        - shoe-service
+        - lane-service
+      networks:
+        - bowling-network
+
+    # 🍃 MongoDB for Transaction Service
+    transaction-mongo:
+      image: mongo:6.0
+      container_name: transaction-mongo
+      expose:
+        - "27017"
+      volumes:
+        - transaction-mongo-data:/data/db
+      networks:
+        - bowling-network
+
+    # 🖥️ Mongo Express GUI for Transaction MongoDB
+    transaction-mongo-express:
+      image: mongo-express
+      container_name: transaction-mongo-express
+      ports:
+        - "8087:8081"
+      environment:
+        ME_CONFIG_MONGODB_SERVER: transaction-mongo
+        ME_CONFIG_BASICAUTH_USERNAME: admin
+        ME_CONFIG_BASICAUTH_PASSWORD: admin
+      depends_on:
+        - transaction-mongo
+      networks:
+        - bowling-network
+
+#################################################################################################################
+
+    api-gateway:
+      build:
+        context: ./api-gateway
+      container_name: api-gateway
+      ports:
+        - "8080:8080"
+      depends_on:
+        - bowlingball-service
+        - shoe-service
+        - lane-service
+        - transaction-service
+      networks:
+        - bowling-network
+
+#################################################################################################################
+
+  # 🔌 Shared Docker Network
+  networks:
+    bowling-network:
+      driver: bridge
+
+  # 💾 Persistent Volume
+  volumes:
+    bowlingball-mysql-data:
+    shoe-postgres-data:
+    lane-mysql-data:
+    transaction-mongo-data:
+
+

@@ -1,0 +1,11 @@
+INSERT INTO shoes (id, size, purchase_date, status) VALUES
+('348d0348-6d25-4b66-b392-db367465d0dc', 'SIZE_8', '2021-01-10', 'AVAILABLE'),
+('7494c495-ac16-449f-8e6c-64b3d61a3e0a', 'SIZE_9', '2022-03-22', 'IN_USE'),
+('ebba984c-0419-48c2-a4b3-fa7746a67a45', 'SIZE_10', '2023-07-18', 'AVAILABLE'),
+('4bf07460-60ee-4179-92e6-41fc4e731a87', 'SIZE_7', '2020-11-05', 'IN_USE'),
+('ccfd2cc3-dfa7-4e21-99b3-c30d07c9d322', 'SIZE_6', '2019-05-30', 'AVAILABLE'),
+('8dd9a25f-30bc-4ff4-a89a-14f04f24bead', 'SIZE_11', '2024-02-02', 'AVAILABLE'),
+('6ebd3c93-93cc-4723-ae62-186383b82f8f', 'SIZE_5', '2023-08-15', 'IN_USE'),
+('29ef3f21-7f33-4425-91ac-96d4a60339a6', 'SIZE_12', '2022-09-09', 'AVAILABLE'),
+('7b19bb69-d71e-48c4-9b70-c4a740bcb76d', 'SIZE_9', '2021-12-01', 'AVAILABLE'),
+('b7b5cf4b-b5b6-4453-913e-3c0c7df2ef48', 'SIZE_7', '2020-06-11', 'IN_USE');
